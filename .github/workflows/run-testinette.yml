@@ -1,0 +1,35 @@
+name: Running Testinette using Vitest
+on:
+  schedule:
+    - cron: "0 1-23 * * *"
+    - cron: "0 0 * * *"
+jobs:
+  check_schedule:
+    name: Test schedule
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip this step every 24 hours
+        if: github.event_name == 'schedule' && github.event.schedule != '0 0 * * *'
+        run: echo "Skipping 24 hours. See you later."
+  run-testinette:
+    needs: check_schedule
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ghcr.io/edenschoolfrance/exam_a1-2javascript:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      ports:
+        - 80
+      volumes:
+        - ${{ github.workspace }}:/app/testinette
+      options: --cpus 1
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Remove optional export keyword
+        run: sed -i 's/export function/function/g' /app/testinette/*
+      - name: Add export keyword
+        run: sed -i 's/function/export function/g' /app/testinette/*
+      - name: Running testinette
+        run: cd /app && npm run test
