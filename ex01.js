@@ -1,5 +1,5 @@
 function isString(myString) {
-    return typeof(myString) == "string";
+	return typeof myString == "string";
 }
 
 console.log(isString("Marc")); // Résultat attendu : true

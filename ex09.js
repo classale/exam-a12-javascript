@@ -1,5 +1,5 @@
 function compterMots(chaine) {
-	return chaine.split(" ").length;
+	return chaine.replaceAll(" ", "").length == 0 ? 0 : chaine.split(" ").length;
 }
 
 console.log(compterMots("Bonjour tout le monde")); // Résultat attendu : 4
